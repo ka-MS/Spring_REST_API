@@ -8,10 +8,11 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Setter // data 애노테이션의 경우 엔티티에 사용하면 상호참조때문에 스택오버플로우 발생할 수 있음
 @Getter
-@EqualsAndHashCode(of = {"id"}) // 해시코드간의 비교
+@EqualsAndHashCode(of = {"id"}) // 해시코드간 비교
 public class Event {
 
-    private Integer id;
+    private Integer id; // 식별자
+
     private String name;
     private String description;
     private LocalDateTime beginEnrollmentDateTime;
@@ -22,6 +23,7 @@ public class Event {
     private int basePrice; // (optional)
     private int maxPrice; // (optional)
     private int limitOfEnrollment;
+
     private boolean offline; // (optional)
     private boolean free;
     private EventStatus eventStatus;
