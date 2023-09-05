@@ -16,6 +16,7 @@ public class Event {
 
     @Id
     @GeneratedValue
+    @Column
     private Integer id; // 식별자
 
     private String name;
@@ -31,7 +32,7 @@ public class Event {
 
     private boolean offline; // (optional)
     private boolean free;
-    @Enumerated(EnumType.STRING) // 숫자면 인트 이런식으로 들어갈 수 가 있어서 스트링으로 지정하는걸 권장
+    @Enumerated(EnumType.STRING) // 숫자면 인트 이런식으로 들어갈수가 있어서 스트링으로 지정하는걸 권장
     private EventStatus eventStatus; 
 
 }

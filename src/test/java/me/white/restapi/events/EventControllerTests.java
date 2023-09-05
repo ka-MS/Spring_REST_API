@@ -7,7 +7,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.hateoas.MediaTypes;
@@ -17,16 +16,17 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDateTime;
+import java.util.Collections;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 //@WebMvcTest //
-@SpringBootTest // 이 어노테이션은 스프링부트어플리케이션을 찾아서 거기서부터 빈등록을하면서함
+@SpringBootTest // 이 어노테이션은 스프링부트어플리케이션을 찾아서 거기서부터 빈등록을 하면서 진행->
 @AutoConfigureMockMvc
 @ExtendWith(SpringExtension.class)
-public class EventControllerTests {
+class EventControllerTests {
 
     @Autowired
     MockMvc mockMvc;
@@ -35,11 +35,11 @@ public class EventControllerTests {
     @Autowired
     ObjectMapper objectMapper;
 
-    @MockBean
-    EventRepository eventRepository;
+//    @MockBean
+//    EventRepository eventRepository;
 
     @Test
-    public void createEvent() throws Exception {
+    void createEvent() throws Exception {
         // given
         Event event = Event.builder()
                 .id(100)
@@ -57,17 +57,18 @@ public class EventControllerTests {
                 .offline(false)
                 .build();
 
-        // when
+        // MockBean을 사용하면 강제로 성공상황을 만들어 놓고 테스트를 진행할 수 있다.
 //        event.setId(10);
 //        Mockito.when(eventRepository.save(event)).thenReturn(event);
+//        System.out.println(event);
 
         // what
-        mockMvc.perform(post("/api/events/") // mockmvc를 이용하면 에러를 던질 수 있음
-                    .contentType(MediaType.APPLICATION_JSON) // contentType은 json 응답에 json을 던지고 있고
+        mockMvc.perform(post("/api/events/") // mockmvc 를 이용하면 에러를 던질 수 있음
+                    .contentType(MediaType.APPLICATION_JSON) // contentType 은 json 응답에 json 을 던지고 있고
                     .accept(MediaTypes.HAL_JSON)
-                    .content(objectMapper.writeValueAsString(event))) // accept header 어떤 답변을 원한다 -> hal_json형태의 media type을 원한다. -> 확장자 비슷한 형태
+                    .content(objectMapper.writeValueAsString(event))) // accept header 어떤 답변을 원한다 -> hal_json 형태의 media type 을 원한다. -> 확장자 비슷한 형태
                 .andDo(print())
-                .andExpect(status().isCreated()) // 확인할 수 있는 메소드 status값이 201인지 확인해줘~
+                .andExpect(status().isCreated()) // 확인할 수 있는 메소드 status 값이 201인지 확인해줘~
                 .andExpect(jsonPath("id").exists())
                 .andExpect(header().exists(HttpHeaders.LOCATION)) // HttpHeaders 에 location 이 있는지 확인
                 .andExpect(header().string(HttpHeaders.CONTENT_TYPE, MediaTypes.HAL_JSON_VALUE + ";charset=UTF-8"))

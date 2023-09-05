@@ -22,21 +22,30 @@ repositories {
 }
 
 dependencies {
-    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-//    implementation 'org.springframework.boot:spring-boot-starter-security'
     implementation 'org.springframework.boot:spring-boot-starter-web'
-    testImplementation 'junit:junit:4.13.1'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    // jpa
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    // spring-security 시큐리티의 경우 인증을 받아야 api 사용 가능
+//    implementation 'org.springframework.boot:spring-boot-starter-security'
+//    testImplementation 'org.springframework.security:spring-security-test'
+    // Junit
+    testImplementation 'junit:junit:4.13.2'
+    // lombok
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
-    testImplementation 'org.springframework.boot:spring-boot-starter-test'
-    testImplementation 'org.springframework.security:spring-security-test'
+    // spring hateoas
     implementation 'org.springframework.boot:spring-boot-starter-hateoas'
-//    asciidoctorExt 'org.springframework.restdocs:spring-restdocs-asciidoctor'
+    // spring restdocs
     testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc'
+    // postgresql
     implementation 'org.postgresql:postgresql'
+    // h2 db
     runtimeOnly 'com.h2database:h2'
+    // modelmapper 
+    // entity <-> dto간 변환을 builder 패턴없이 손쉽게 해주는 라이브러리 
+    // 그래들에서 버전설정을 지원하지 않으므로 버전 기입 필요, bean 수동주입 해줘야 사용 가능
     implementation 'org.modelmapper:modelmapper:3.1.1'
-
 }
 
 tasks.named('test') {
