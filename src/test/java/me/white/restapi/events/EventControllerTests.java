@@ -1,13 +1,17 @@
 package me.white.restapi.events;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.hateoas.MediaTypes;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
@@ -16,10 +20,11 @@ import java.time.LocalDateTime;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@WebMvcTest
+//@WebMvcTest //
+@SpringBootTest // 이 어노테이션은 스프링부트어플리케이션을 찾아서 거기서부터 빈등록을하면서함
+@AutoConfigureMockMvc
 @ExtendWith(SpringExtension.class)
 public class EventControllerTests {
 
@@ -37,6 +42,7 @@ public class EventControllerTests {
     public void createEvent() throws Exception {
         // given
         Event event = Event.builder()
+                .id(100)
                 .name("test")
                 .description("Rest API")
                 .beginEventDateTime(LocalDateTime.of(2020, 1, 1, 12, 0))
@@ -47,11 +53,13 @@ public class EventControllerTests {
                 .maxPrice(200)
                 .limitOfEnrollment(100)
                 .location("강남역 d2 스타텁 팩토리")
+                .free(true)
+                .offline(false)
                 .build();
 
         // when
-        event.setId(10);
-        Mockito.when(eventRepository.save(event)).thenReturn(event);
+//        event.setId(10);
+//        Mockito.when(eventRepository.save(event)).thenReturn(event);
 
         // what
         mockMvc.perform(post("/api/events/") // mockmvc를 이용하면 에러를 던질 수 있음
@@ -59,8 +67,12 @@ public class EventControllerTests {
                     .accept(MediaTypes.HAL_JSON)
                     .content(objectMapper.writeValueAsString(event))) // accept header 어떤 답변을 원한다 -> hal_json형태의 media type을 원한다. -> 확장자 비슷한 형태
                 .andDo(print())
-                .andExpect(status().isCreated())
-                .andExpect(jsonPath("id").exists()); // 확인할 수 있는 메소드 status값이 201인지 확인해줘~
+                .andExpect(status().isCreated()) // 확인할 수 있는 메소드 status값이 201인지 확인해줘~
+                .andExpect(jsonPath("id").exists())
+                .andExpect(header().exists(HttpHeaders.LOCATION)) // HttpHeaders 에 location 이 있는지 확인
+                .andExpect(header().string(HttpHeaders.CONTENT_TYPE, MediaTypes.HAL_JSON_VALUE + ";charset=UTF-8"))
+                .andExpect(jsonPath("id").value(Matchers.not(100)))
+                .andExpect(jsonPath("free").value(Matchers.not(true)));
     }
 
 }

@@ -11,6 +11,7 @@ import java.time.LocalDateTime;
 @Getter
 @EqualsAndHashCode(of = {"id"}) // 해시코드간 비교
 @Entity
+@ToString
 public class Event {
 
     @Id

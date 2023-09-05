@@ -1,5 +1,6 @@
 package me.white.restapi.events;
 
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.MediaTypes;
 import org.springframework.http.HttpStatus;
@@ -19,18 +20,23 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 //@RequestMapping(value = "/api/events/", produces = MediaTypes.HAL_JSON_VALUE)// 이렇게 작성하면 모든 응답을 해당 형태로 모내게됨
 public class EventController {
 
-    private final EventRepository eventRepository;
+    @Autowired
+    private EventRepository eventRepository;
 
-    public EventController(EventRepository eventRepository) {
+    private final ModelMapper modelMapper;
+
+    public EventController(EventRepository eventRepository, ModelMapper modelMapper) {
         this.eventRepository = eventRepository;
+        this.modelMapper = modelMapper;
     }
 
     @PostMapping("/api/events/")
-    public ResponseEntity<Event> createEvent(@RequestBody Event event) {
+    public ResponseEntity<Event> createEvent(@RequestBody EventDto eventDto) {
+        Event event = modelMapper.map(eventDto, Event.class);
         Event newEvent = this.eventRepository.save(event);
+        System.out.println(newEvent);
         URI createUri = linkTo(EventController.class).slash(newEvent.getId()).toUri();
-//        URI createUri = linkTo(methodOn(EventController.class).createEvent(event)).slash("{id}").toUri();
-        event.setId(10);
+
         return ResponseEntity.created(createUri).body(event);
     }
 }
