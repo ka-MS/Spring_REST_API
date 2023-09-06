@@ -23,6 +23,7 @@ repositories {
 
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     // jpa
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
@@ -42,10 +43,11 @@ dependencies {
     implementation 'org.postgresql:postgresql'
     // h2 db
     runtimeOnly 'com.h2database:h2'
-    // modelmapper 
-    // entity <-> dto간 변환을 builder 패턴없이 손쉽게 해주는 라이브러리 
+    // modelmapper
+    // entity <-> dto간 변환을 builder 패턴없이 손쉽게 해주는 라이브러리
     // 그래들에서 버전설정을 지원하지 않으므로 버전 기입 필요, bean 수동주입 해줘야 사용 가능
     implementation 'org.modelmapper:modelmapper:3.1.1'
+
 }
 
 tasks.named('test') {

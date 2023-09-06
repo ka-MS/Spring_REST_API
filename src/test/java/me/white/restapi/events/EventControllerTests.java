@@ -44,7 +44,7 @@ class EventControllerTests {
         EventDto event = EventDto.builder()
                 .name("test")
                 .description("Rest API")
-                .beginEventDateTime(LocalDateTime.of(2020, 1, 1, 12, 0))
+                .beginEnrollmentDateTime(LocalDateTime.of(2020, 1, 1, 12, 0))
                 .closeEnrollmentDateTime(LocalDateTime.of(2020, 1, 2, 12, 0))
                 .beginEventDateTime(LocalDateTime.of(2020, 1, 3, 1, 0))
                 .endEventDateTime(LocalDateTime.of(2020, 1, 4, 1, 0))
@@ -82,7 +82,7 @@ class EventControllerTests {
                 .id(100)
                 .name("test")
                 .description("Rest API")
-                .beginEventDateTime(LocalDateTime.of(2020, 1, 1, 12, 0))
+                .beginEnrollmentDateTime(LocalDateTime.of(2020, 1, 1, 12, 0))
                 .closeEnrollmentDateTime(LocalDateTime.of(2020, 1, 2, 12, 0))
                 .beginEventDateTime(LocalDateTime.of(2020, 1, 3, 1, 0))
                 .endEventDateTime(LocalDateTime.of(2020, 1, 4, 1, 0))
@@ -103,6 +103,17 @@ class EventControllerTests {
         // then
                 .andDo(print())
                 .andExpect(status().isBadRequest()) // 확인할 수 있는 메소드 status 값이 201인지 확인해줘~
+        ;
+    }
+
+    @Test
+    void createEvent_Bad_Request_Empty_Input() throws Exception {
+        EventDto eventDto = EventDto.builder().build();
+
+        this.mockMvc.perform(post("/api/events/")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(this.objectMapper.writeValueAsString(eventDto)))
+                .andExpect(status().isBadRequest())
         ;
     }
 
