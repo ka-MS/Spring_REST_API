@@ -48,6 +48,8 @@ dependencies {
     // 그래들에서 버전설정을 지원하지 않으므로 버전 기입 필요, bean 수동주입 해줘야 사용 가능
     implementation 'org.modelmapper:modelmapper:3.1.1'
 
+    implementation 'pl.pragmatists:JUnitParams:1.1.1'
+
 }
 
 tasks.named('test') {
