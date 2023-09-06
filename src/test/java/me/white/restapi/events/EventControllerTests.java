@@ -1,6 +1,7 @@
 package me.white.restapi.events;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import me.white.restapi.common.TestDescription;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -9,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Description;
 import org.springframework.hateoas.MediaTypes;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -39,6 +41,7 @@ class EventControllerTests {
 //    EventRepository eventRepository;
 
     @Test
+    @TestDescription("정상적으로 이벤트를 생성하는 테스트")
     void createEvent() throws Exception {
         // given
         EventDto event = EventDto.builder()
@@ -76,6 +79,7 @@ class EventControllerTests {
     }
 
     @Test
+    @TestDescription("입력받을수 없는 값을 입력받은경우 에러가 발생하는 테스트")
     void createEvent_Bad_Request() throws Exception {
         // given
         Event event = Event.builder()
@@ -107,6 +111,7 @@ class EventControllerTests {
     }
 
     @Test
+    @TestDescription("입력값이 비어있는경우 에러가 발생하는 테스트")
     void createEvent_Bad_Request_Empty_Input() throws Exception {
         EventDto eventDto = EventDto.builder().build();
 
@@ -118,6 +123,7 @@ class EventControllerTests {
     }
 
     @Test
+    @Description("입력값이 잘못된경우 에러가 발생하는 테스트")
     void createEvent_Bad_Request_Wrong_Input() throws Exception {
         EventDto eventDto = EventDto.builder() // 날짜라던지 가격등 어노테이션으로 체크하기 힘든경우
                 .name("test")
