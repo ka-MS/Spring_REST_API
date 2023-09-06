@@ -64,9 +64,9 @@ class EventControllerTests {
 
         // when
         mockMvc.perform(post("/api/events/") // mockmvc 를 이용하면 에러를 던질 수 있음
-                .contentType(MediaType.APPLICATION_JSON) // contentType 은 json 응답에 json 을 던지고 있고
-                .accept(MediaTypes.HAL_JSON)
-                .content(objectMapper.writeValueAsString(event))) // accept header 어떤 답변을 원한다 -> hal_json 형태의 media type 을 원한다. -> 확장자 비슷한 형태
+                        .contentType(MediaType.APPLICATION_JSON) // contentType 은 json 응답에 json 을 던지고 있고
+                        .accept(MediaTypes.HAL_JSON)
+                        .content(objectMapper.writeValueAsString(event))) // accept header 어떤 답변을 원한다 -> hal_json 형태의 media type 을 원한다. -> 확장자 비슷한 형태
                 // then
                 .andDo(print())
                 .andExpect(status().isCreated()) // 확인할 수 있는 메소드 status 값이 201인지 확인해줘~
@@ -101,10 +101,10 @@ class EventControllerTests {
 
         // when
         mockMvc.perform(post("/api/events/") // mockmvc 를 이용하면 에러를 던질 수 있음
-                .contentType(MediaType.APPLICATION_JSON) // contentType 은 json 응답에 json 을 던지고 있고
-                .accept(MediaTypes.HAL_JSON)
-                .content(objectMapper.writeValueAsString(event))) // accept header 어떤 답변을 원한다 -> hal_json 형태의 media type 을 원한다. -> 확장자 비슷한 형태
-        // then
+                        .contentType(MediaType.APPLICATION_JSON) // contentType 은 json 응답에 json 을 던지고 있고
+                        .accept(MediaTypes.HAL_JSON)
+                        .content(objectMapper.writeValueAsString(event))) // accept header 어떤 답변을 원한다 -> hal_json 형태의 media type 을 원한다. -> 확장자 비슷한 형태
+                // then
                 .andDo(print())
                 .andExpect(status().isBadRequest()) // 확인할 수 있는 메소드 status 값이 201인지 확인해줘~
         ;
@@ -141,7 +141,13 @@ class EventControllerTests {
         this.mockMvc.perform(post("/api/events/")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(this.objectMapper.writeValueAsString(eventDto)))
+                .andDo(print())
                 .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$[0].objectName").exists())
+//                .andExpect(jsonPath("$[0].field").exists()) // []는 인덱스,글로벌 에러의 경우 필드값과 리젝티드벨류값이 없으므로 에러날 수 있음그래서 지움
+                .andExpect(jsonPath("$[0].defaultMessage").exists())
+                .andExpect(jsonPath("$[0].code").exists())
+//                .andExpect(jsonPath("$[0].rejectedValue").exists())
         ;
     }
 

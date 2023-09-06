@@ -31,12 +31,15 @@ public class EventController {
     }
 
     @PostMapping("/api/events/")
-    public ResponseEntity<Event> createEvent(@RequestBody @Valid EventDto eventDto, Errors errors) {
+    public ResponseEntity createEvent(@RequestBody @Valid EventDto eventDto, Errors errors) {
         if (errors.hasErrors()){
-            return ResponseEntity.badRequest().build();
+            return ResponseEntity.badRequest().build(); // 여기서는 .body(errors)로 해서 바디에 값을 넣을 수 없음
+            // 왜냐면 자바빈 스펙을 준수한 객체만 제이슨으로 직렬화해서 담을 수 있기 때문
+            // 왜 jason으로 변환해야하나 -> 미디어타입을 hal-json으로 지정해놓았기 때문에
         }
 
         eventValidator.validate(eventDto, errors);
+        System.out.println(errors.hashCode());
         if (errors.hasErrors()){
             return ResponseEntity.badRequest().build();
         }
@@ -45,6 +48,6 @@ public class EventController {
         Event newEvent = this.eventRepository.save(event);
         URI createUri = linkTo(EventController.class).slash(newEvent.getId()).toUri();
 
-        return ResponseEntity.created(createUri).body(event);
+        return ResponseEntity.created(createUri).body(event);// 바디에 이벤트 객체를 제이슨으로 담이서 보여줌 
     }
 }
