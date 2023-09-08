@@ -1,16 +1,19 @@
 package me.white.restapi.events;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import me.white.restapi.common.RestDocsConfiguration;
 import me.white.restapi.common.TestDescription;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Description;
+import org.springframework.context.annotation.Import;
 import org.springframework.hateoas.MediaTypes;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -21,6 +24,11 @@ import java.time.LocalDateTime;
 import java.util.Collections;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.restdocs.headers.HeaderDocumentation.*;
+import static org.springframework.restdocs.hypermedia.HypermediaDocumentation.linkWithRel;
+import static org.springframework.restdocs.hypermedia.HypermediaDocumentation.links;
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
+import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -29,6 +37,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest // 이 어노테이션은 스프링부트어플리케이션을 찾아서 거기서부터 빈등록을 하면서 진행->
 @AutoConfigureMockMvc
 @ExtendWith(SpringExtension.class)
+@AutoConfigureRestDocs
+@Import(RestDocsConfiguration.class)
 class EventControllerTests {
 
     @Autowired
@@ -81,7 +91,52 @@ class EventControllerTests {
                 .andExpect(jsonPath("_links.self").exists())
                 .andExpect(jsonPath("_links.query-event").exists())
                 .andExpect(jsonPath("_links.update-event").exists())
+                .andDo(document("create-event",
+                        links(linkWithRel("self").description("link to self "),
+                                linkWithRel("query-event").description("link to query-event "),
+                                linkWithRel("update-event").description("link to update-event "))
+                ,requestHeaders( // 헤더 문서화
+                        headerWithName(HttpHeaders.ACCEPT).description("Accept header"),
+                        headerWithName(HttpHeaders.CONTENT_TYPE).description("Content-Type header")
+                        )
+                ,requestFields( // 필드 문서화
+                        fieldWithPath("name").description("Name of New event"),
+                        fieldWithPath("description").description("Description of New event"),
+                        fieldWithPath("beginEnrollmentDateTime").description("beginEnrollmentDateTime of New event"),
+                        fieldWithPath("closeEnrollmentDateTime").description("closeEnrollmentDateTime of New event"),
+                        fieldWithPath("beginEventDateTime").description("beginEventDateTime of New event"),
+                        fieldWithPath("endEventDateTime").description("endEventDateTime of New event"),
+                        fieldWithPath("basePrice").description("basePrice of New event"),
+                        fieldWithPath("maxPrice").description("maxPrice of New event"),
+                        fieldWithPath("limitOfEnrollment").description("limitOfEnrollment of New event"),
+                        fieldWithPath("location").description("location of New event")
+                )
+                ,responseHeaders( // 헤더 문서화
+                        headerWithName(HttpHeaders.LOCATION).description("Location header"),
+                        headerWithName(HttpHeaders.CONTENT_TYPE).description("Content-Type header")
+                )
+                ,responseFields( // relaxed를 붙이면 문서의 일부분만 있어도 된다는 메소드 -links 무시- 단점은 정확한 문서를 만들수 없다는것
+                        fieldWithPath("id").description("id of New event"),
+                        fieldWithPath("name").description("name of New event"),
+                        fieldWithPath("description").description("description of New event"),
+                        fieldWithPath("beginEnrollmentDateTime").description("beginEnrollmentDateTime of New event"),
+                        fieldWithPath("closeEnrollmentDateTime").description("closeEnrollmentDateTime of New event"),
+                        fieldWithPath("beginEventDateTime").description("beginEventDateTime of New event"),
+                        fieldWithPath("endEventDateTime").description("endEventDateTime of New event"),
+                        fieldWithPath("basePrice").description("basePrice of New event"),
+                        fieldWithPath("maxPrice").description("maxPrice of New event"),
+                        fieldWithPath("limitOfEnrollment").description("limitOfEnrollment of New event"),
+                        fieldWithPath("location").description("location of New event"),
+                        fieldWithPath("free").description("free of New event"),
+                        fieldWithPath("offline").description("it tells if this event is offline"),
+                        fieldWithPath("eventStatus").description("eventStatus"),
+                        fieldWithPath("_links.self.href").description("links to self"),
+                        fieldWithPath("_links.query-event.href").description("links to query-event"),
+                        fieldWithPath("_links.update-event.href").description("links to update-event")
+                )
+                ))
         ;
+
     }
 
     @Test

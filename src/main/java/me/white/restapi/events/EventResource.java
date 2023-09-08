@@ -23,7 +23,6 @@ public class EventResource extends EntityModel<Event> {
         super(event, List.of(links));
 //        add(Link.of("http://localhost:8080/api/events/"));
         add(linkTo(EventController.class).slash(event.getId()).withSelfRel());
-
     }
 
 //    private Event event;
